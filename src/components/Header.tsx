@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {
-	AppBar, fade,
+	AppBar,
+	fade,
 	IconButton,
 	IconButtonProps,
 	InputBase,
@@ -16,7 +17,9 @@ import DarkThemeIcon from '@material-ui/icons/Brightness4';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
 import CancelIcon from '@material-ui/icons/Close';
-
+import {useAppDispatch, useAppSelector} from '../store/store';
+import {selectTodo, todoActions} from '../store/todoSlice';
+import {selectTheme, themeActions} from '../store/themeSlice';
 
 const menuId = 'appbar-menu';
 
@@ -25,20 +28,14 @@ enum MenuItemKey {
 	delete
 }
 
-type HeaderProps = {
-	useDark: boolean;
-	toggleTheme: () => void;
-	deleteMode: boolean;
-	setDeleteMode: (deleteMode: boolean) => void;
-	onDelete: () => void;
-	searchText: string;
-	setSearchText: (text: string) => void;
-}
-
-export default function Header({useDark, toggleTheme, deleteMode, setDeleteMode, onDelete, searchText, setSearchText}: HeaderProps) {
+export default function Header() {
 	const classes = useStyles();
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-	const open = Boolean(anchorEl);
+	const d = useAppDispatch();
+	const {darkMode} = useAppSelector(selectTheme('darkMode'));
+	const {searchText, idsForDeletion} = useAppSelector(selectTodo('searchText', 'idsForDeletion'))
+	const deleteMode = useMemo(() => !!idsForDeletion, [idsForDeletion]);
+
 
 	const handleMenuClick: IconButtonProps['onClick'] = event => {
 		setAnchorEl(event.currentTarget);
@@ -52,18 +49,20 @@ export default function Header({useDark, toggleTheme, deleteMode, setDeleteMode,
 		handleMenuClose();
 		switch (forKey) {
 			case MenuItemKey.theme:
-				return toggleTheme();
+				return d(themeActions.toggleTheme());
 			case MenuItemKey.delete:
-				return setDeleteMode(true);
+				return d(todoActions.setIdsForDeletion(true));
 			default:
 				throw new Error('Invalid key for Menu Item Click Handler');
 		}
 	}
 
 	const handleOnDelete = () => {
-		onDelete();
+		// onDelete();
+		d(todoActions.deleteAllSelected());
 		handleMenuClose();
-		setDeleteMode(false);
+		// setDeleteMode(false);
+		d(todoActions.setIdsForDeletion(false));
 	}
 
 	return (
@@ -77,12 +76,12 @@ export default function Header({useDark, toggleTheme, deleteMode, setDeleteMode,
 					<InputBase
 						placeholder="Search…"
 						value={searchText}
-						onChange={({target}) => setSearchText(target.value)}
+						onChange={({target}) => d(todoActions.setSearchText(target.value))}
 						classes={{
 							root: classes.inputRoot,
 							input: classes.inputInput,
 						}}
-						inputProps={{ 'aria-label': 'search' }}
+						inputProps={{'aria-label': 'search'}}
 					/>
 				</div>
 				{deleteMode ? (
@@ -90,7 +89,7 @@ export default function Header({useDark, toggleTheme, deleteMode, setDeleteMode,
 						<IconButton onClick={handleOnDelete}>
 							<DeleteIcon />
 						</IconButton>
-						<IconButton onClick={() => setDeleteMode(false)}>
+						<IconButton onClick={() => d(todoActions.setIdsForDeletion(false))}>
 							<CancelIcon />
 						</IconButton>
 					</div>
@@ -103,7 +102,7 @@ export default function Header({useDark, toggleTheme, deleteMode, setDeleteMode,
 						            onClick={handleMenuClick}>
 							<MenuIcon />
 						</IconButton>
-						<Menu id={menuId} open={open} anchorEl={anchorEl} anchorOrigin={{
+						<Menu id={menuId} open={!!anchorEl} anchorEl={anchorEl} anchorOrigin={{
 							vertical: 'top',
 							horizontal: 'right'
 						}} transformOrigin={{
@@ -111,7 +110,7 @@ export default function Header({useDark, toggleTheme, deleteMode, setDeleteMode,
 							horizontal: 'right'
 						}} keepMounted onClose={handleMenuClose}>
 							<MenuItem key={MenuItemKey.theme} onClick={handleMenuItemClick(MenuItemKey.theme)}>
-								{useDark ?
+								{darkMode ?
 									<><LightThemeIcon className={classes.menuItemIcon} /> Light</> :
 									<><DarkThemeIcon className={classes.menuItemIcon} /> Dark</>}
 							</MenuItem>
