@@ -48,7 +48,7 @@ export const createContextWith = <
   const reducer = (draft: Draft<State>, action: { type: keyof typeof actions; payload: any }) =>
     actions[action.type](draft, action.payload as any);
 
-  const ContextProvider: React.FC<{ initialState?: State }> = (props) => {
+  const ContextProvider: React.FC<{ initialState?: Partial<State> }> = (props) => {
     const [state, dispatch] = useImmerReducer(reducer, { ...initialState, ...props.initialState } as State);
 
     const dispatchers: ActionDispatchers = useMemo(
