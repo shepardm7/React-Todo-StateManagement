@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Grid, IconButton, makeStyles, TextField, TextFieldProps } from '@material-ui/core';
 import { Add, KeyboardReturn } from '@material-ui/icons';
-import { useTodo } from '../../store/todoSlice';
+import { todoActions, useTodo } from '../../store/todoSlice';
 
 export default function TodoInsert(): JSX.Element {
   const classes = useStyles();
   const [inputValue, setInputValue] = useState('');
-  const { action: todoActions } = useTodo();
+  const { dispatch: dispatchTodo } = useTodo();
 
   const handleOnAdd = () => {
     const parsedValue = inputValue.trim();
     if (!parsedValue) return;
-    todoActions.addToTodoList(parsedValue);
+    dispatchTodo(todoActions.addToTodoList(parsedValue));
     setInputValue('');
   };
 

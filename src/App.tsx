@@ -27,7 +27,7 @@ function Main() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const {
     state: { darkMode },
-    action: { setDarkMode },
+    dispatchers: { setDarkMode },
   } = useTheme();
   useEffect(() => {
     setDarkMode(prefersDarkMode);

@@ -33,12 +33,12 @@ export default function Header() {
 
   const {
     state: { darkMode },
-    action: themeAction,
+    dispatchers: themeDispatchers,
   } = useTheme();
 
   const {
     state: { searchText, idsForDeletion },
-    action: todoActions,
+    dispatchers: todoDispatchers,
   } = useTodo();
 
   const deleteMode = useMemo(() => !!idsForDeletion, [idsForDeletion]);
@@ -55,9 +55,9 @@ export default function Header() {
     handleMenuClose();
     switch (forKey) {
       case MenuItemKey.theme:
-        return themeAction.toggleTheme();
+        return themeDispatchers.toggleTheme();
       case MenuItemKey.delete:
-        return todoActions.setIdsForDeletion(true);
+        return todoDispatchers.setIdsForDeletion(true);
       default:
         throw new Error('Invalid key for Menu Item Click Handler');
     }
@@ -65,10 +65,10 @@ export default function Header() {
 
   const handleOnDelete = () => {
     // onDelete();
-    todoActions.deleteAllSelected();
+    todoDispatchers.deleteAllSelected();
     handleMenuClose();
     // setDeleteMode(false);
-    todoActions.setIdsForDeletion(false);
+    todoDispatchers.setIdsForDeletion(false);
   };
 
   return (
@@ -84,7 +84,7 @@ export default function Header() {
           <InputBase
             placeholder="Search…"
             value={searchText}
-            onChange={({ target }) => todoActions.setSearchText(target.value)}
+            onChange={({ target }) => todoDispatchers.setSearchText(target.value)}
             classes={{
               root: classes.inputRoot,
               input: classes.inputInput,
@@ -97,7 +97,7 @@ export default function Header() {
             <IconButton onClick={handleOnDelete}>
               <DeleteIcon />
             </IconButton>
-            <IconButton onClick={() => todoActions.setIdsForDeletion(false)}>
+            <IconButton onClick={() => todoDispatchers.setIdsForDeletion(false)}>
               <CancelIcon />
             </IconButton>
           </div>

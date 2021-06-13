@@ -8,7 +8,7 @@ const initialState: ThemeState = {
   darkMode: false,
 };
 
-const { ContextProvider, useStoreContext } = createContextWith(initialState, {
+const { ContextProvider, useStoreContext, actions } = createContextWith(initialState, {
   setDarkMode(draft, darkMode: boolean) {
     draft.darkMode = darkMode;
   },
@@ -17,4 +17,4 @@ const { ContextProvider, useStoreContext } = createContextWith(initialState, {
   },
 });
 
-export { ContextProvider as ThemeContextProvider, useStoreContext as useTheme };
+export { ContextProvider as ThemeContextProvider, useStoreContext as useTheme, actions as themeActions };

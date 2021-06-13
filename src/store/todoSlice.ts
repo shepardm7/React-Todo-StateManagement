@@ -21,7 +21,11 @@ const initialState: TodoState = {
   searchText: '',
 };
 
-export const { ContextProvider: TodoContextProvider, useStoreContext: useTodo } = createContextWith(initialState, {
+export const {
+  ContextProvider: TodoContextProvider,
+  useStoreContext: useTodo,
+  actions: todoActions,
+} = createContextWith(initialState, {
   addToTodoList(state, value: string) {
     state.todos.unshift({
       id: new Date().getTime().toString(),

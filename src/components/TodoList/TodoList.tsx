@@ -5,7 +5,7 @@ import { TreeItem, TreeView } from '@material-ui/lab';
 import { ChevronRight, ExpandMore } from '@material-ui/icons';
 import moment from 'moment';
 import formats from '../../constants/formats';
-import { todoUtils, useTodo } from '../../store/todoSlice';
+import { todoActions, todoUtils, useTodo } from '../../store/todoSlice';
 
 const TodoList = React.memo(() => {
   const classes = useStyles();
@@ -51,18 +51,18 @@ const TodoListItem = React.memo(({ todo }: TodoListItemProps) => {
   const classes = useItemStyles(!!todo?.completedOn);
   const {
     state: { idsForDeletion },
-    action: todoActions,
+    dispatch: dispatchTodo,
   } = useTodo();
   const selectedForDelete = useMemo(() => !!idsForDeletion, [idsForDeletion]);
 
   const handleOnClick = useCallback(() => {
     if (selectedForDelete) {
-      todoActions.toggleDeleteIds(todo.id);
+      dispatchTodo(todoActions.toggleDeleteIds(todo.id));
     } else {
-      todoActions.toggleTodoComplete(todo.id);
+      dispatchTodo(todoActions.toggleTodoComplete(todo.id));
       // onClick(todo.id);
     }
-  }, [selectedForDelete, todo.id, todoActions]);
+  }, [dispatchTodo, selectedForDelete, todo.id]);
   return (
     <ListItem button onClick={handleOnClick}>
       {selectedForDelete && (
