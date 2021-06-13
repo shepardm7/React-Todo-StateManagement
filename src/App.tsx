@@ -1,13 +1,12 @@
-import React, {useEffect} from 'react';
-import {CssBaseline, ThemeProvider, useMediaQuery} from '@material-ui/core';
+import React, { useEffect } from 'react';
+import { CssBaseline, ThemeProvider, useMediaQuery } from '@material-ui/core';
 import theme from './theme';
 import Header from './components/Header';
 import MainContainer from './components/MainContainer/MainContainer';
 import TodoInsert from './components/TodoInsert/TodoInsert';
 import TodoList from './components/TodoList/TodoList';
-import {Provider} from 'react-redux';
-import {Store, useAppDispatch, useAppSelector} from './store/store';
-import {selectTheme, themeActions} from './store/themeSlice';
+import { ThemeContextProvider, useTheme } from "./store/themeSlice";
+import { TodoContextProvider } from './store/todoSlice';
 
 
 export type Todo = {
@@ -19,28 +18,29 @@ export type Todo = {
 
 function App() {
 	return (
-		<Provider store={Store}>
+		<ThemeContextProvider>
 			<Main />
-		</Provider>
+		</ThemeContextProvider>
 	);
 }
 
 function Main() {
 	const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-	const d = useAppDispatch();
-	const {darkMode} = useAppSelector(selectTheme('darkMode'));
+	const { state: { darkMode }, action: { setDarkMode } } = useTheme();
 	useEffect(() => {
-		d(themeActions.setDarkMode(prefersDarkMode));
-	}, [d, prefersDarkMode]);
+		setDarkMode(prefersDarkMode);
+	}, [prefersDarkMode, setDarkMode]);
 
 	return (
 		<ThemeProvider theme={theme(darkMode)}>
 			<CssBaseline />
-			<MainContainer
-				header={<Header />}
-				footer={<TodoInsert />}>
-				<TodoList />
-			</MainContainer>
+			<TodoContextProvider>
+				<MainContainer
+					header={<Header />}
+					footer={<TodoInsert />}>
+					<TodoList />
+				</MainContainer>
+			</TodoContextProvider>
 		</ThemeProvider>
 	)
 }

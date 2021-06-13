@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, { useMemo, useState } from 'react';
 import {
 	AppBar,
 	fade,
@@ -17,9 +17,8 @@ import DarkThemeIcon from '@material-ui/icons/Brightness4';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
 import CancelIcon from '@material-ui/icons/Close';
-import {useAppDispatch, useAppSelector} from '../store/store';
-import {selectTodo, todoActions} from '../store/todoSlice';
-import {selectTheme, themeActions} from '../store/themeSlice';
+import { useTheme } from "../store/themeSlice";
+import { useTodo } from "../store/todoSlice";
 
 const menuId = 'appbar-menu';
 
@@ -31,11 +30,9 @@ enum MenuItemKey {
 export default function Header() {
 	const classes = useStyles();
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-	const d = useAppDispatch();
-	const {darkMode} = useAppSelector(selectTheme('darkMode'));
-	const {searchText, idsForDeletion} = useAppSelector(selectTodo('searchText', 'idsForDeletion'))
+	const { state: { darkMode }, action: themeAction } = useTheme();
+	const { state: { searchText, idsForDeletion }, action: todoActions } = useTodo();
 	const deleteMode = useMemo(() => !!idsForDeletion, [idsForDeletion]);
-
 
 	const handleMenuClick: IconButtonProps['onClick'] = event => {
 		setAnchorEl(event.currentTarget);
@@ -49,9 +46,9 @@ export default function Header() {
 		handleMenuClose();
 		switch (forKey) {
 			case MenuItemKey.theme:
-				return d(themeActions.toggleTheme());
+				return themeAction.toggleTheme();
 			case MenuItemKey.delete:
-				return d(todoActions.setIdsForDeletion(true));
+				return todoActions.setIdsForDeletion(true);
 			default:
 				throw new Error('Invalid key for Menu Item Click Handler');
 		}
@@ -59,10 +56,10 @@ export default function Header() {
 
 	const handleOnDelete = () => {
 		// onDelete();
-		d(todoActions.deleteAllSelected());
+		todoActions.deleteAllSelected();
 		handleMenuClose();
 		// setDeleteMode(false);
-		d(todoActions.setIdsForDeletion(false));
+		todoActions.setIdsForDeletion(false);
 	}
 
 	return (
@@ -76,12 +73,12 @@ export default function Header() {
 					<InputBase
 						placeholder="Search…"
 						value={searchText}
-						onChange={({target}) => d(todoActions.setSearchText(target.value))}
+						onChange={({ target }) => todoActions.setSearchText(target.value)}
 						classes={{
 							root: classes.inputRoot,
 							input: classes.inputInput,
 						}}
-						inputProps={{'aria-label': 'search'}}
+						inputProps={{ 'aria-label': 'search' }}
 					/>
 				</div>
 				{deleteMode ? (
@@ -89,7 +86,7 @@ export default function Header() {
 						<IconButton onClick={handleOnDelete}>
 							<DeleteIcon />
 						</IconButton>
-						<IconButton onClick={() => d(todoActions.setIdsForDeletion(false))}>
+						<IconButton onClick={() => todoActions.setIdsForDeletion(false)}>
 							<CancelIcon />
 						</IconButton>
 					</div>

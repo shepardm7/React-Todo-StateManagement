@@ -8,7 +8,6 @@ type MainContainerProps = ContainerProps & {
 
 export default function MainContainer({children, header, footer}: MainContainerProps) {
 	const classes = useStyles();
-	console.log('MainContainer');
 	return (
 		<Container className={classes.mainContainer}>
 			<Container maxWidth="md" className={classes.innerContainer}>

@@ -1,26 +1,25 @@
-import React, {useState} from 'react';
-import {Grid, IconButton, makeStyles, TextField, TextFieldProps} from '@material-ui/core';
-import {Add, KeyboardReturn} from '@material-ui/icons';
-import {useAppDispatch} from '../../store/store';
-import {todoActions} from '../../store/todoSlice';
+import React, { useState } from 'react';
+import { Grid, IconButton, makeStyles, TextField, TextFieldProps } from '@material-ui/core';
+import { Add, KeyboardReturn } from '@material-ui/icons';
+import { useTodo } from "../../store/todoSlice";
 
 export default function TodoInsert() {
 	const classes = useStyles();
 	const [inputValue, setInputValue] = useState('');
-	const d = useAppDispatch();
+	const { action: todoActions } = useTodo();
 
 	const handleOnAdd = () => {
 		const parsedValue = inputValue.trim();
 		if (!parsedValue) return;
-		d(todoActions.addToTodoList((parsedValue)));
+		todoActions.addToTodoList((parsedValue));
 		setInputValue('');
 	}
 
-	const handleInputChange: TextFieldProps['onChange'] = ({target: {value}}) => {
+	const handleInputChange: TextFieldProps['onChange'] = ({ target: { value } }) => {
 		setInputValue(value);
 	}
 
-	const handleOnKeyDown: TextFieldProps['onKeyDown'] = ({code}) => {
+	const handleOnKeyDown: TextFieldProps['onKeyDown'] = ({ code }) => {
 		if (code === 'Enter') {
 			handleOnAdd();
 		}
@@ -38,7 +37,7 @@ export default function TodoInsert() {
 					           variant="standard"
 					           fullWidth
 					           value={inputValue}
-					           autoComplete='off'
+					           autoComplete="off"
 					           onChange={handleInputChange}
 					           onKeyDown={handleOnKeyDown} />
 				</Grid>

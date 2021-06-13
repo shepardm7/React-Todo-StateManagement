@@ -1,16 +1,16 @@
-import React, {useCallback, useMemo} from 'react';
-import {Todo} from '../../App';
-import {Checkbox, Grid, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography} from '@material-ui/core';
-import {TreeItem, TreeView} from '@material-ui/lab';
-import {ChevronRight, ExpandMore} from '@material-ui/icons';
+import React, { useCallback, useMemo } from 'react';
+import { Todo } from '../../App';
+import { Checkbox, Grid, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography } from '@material-ui/core';
+import { TreeItem, TreeView } from '@material-ui/lab';
+import { ChevronRight, ExpandMore } from '@material-ui/icons';
 import moment from 'moment';
 import formats from '../../constants/formats';
-import {useAppDispatch, useAppSelector} from '../../store/store';
-import {selectTodo, todoActions, todoSelectors} from '../../store/todoSlice';
+import { todoUtils, useTodo } from '../../store/todoSlice';
 
 const TodoList = React.memo(() => {
 	const classes = useStyles();
-	const {filteredTodos, filteredCompletedTodos} = useAppSelector(todoSelectors.filteredTodoLists);
+	const { state: todoState } = useTodo();
+	const { filteredTodos, filteredCompletedTodos } = useMemo(() => todoUtils.filteredTodoLists(todoState), [todoState]);
 	if (!filteredTodos.length && !filteredCompletedTodos.length) {
 		return (
 			<div className={classes.emptyList}>Your todo list is empty</div>
@@ -24,14 +24,14 @@ const TodoList = React.memo(() => {
 					<TreeItem nodeId="todo" label={`Todo [${filteredTodos.length}]`}>
 						<List>
 							{filteredTodos.map(todoItem => <TodoListItem key={todoItem.id}
-							                                        todo={todoItem} />)}
+							                                             todo={todoItem} />)}
 						</List>
 					</TreeItem>)}
 				{!!filteredCompletedTodos.length && (
 					<TreeItem nodeId="completed" label={`Completed [${filteredCompletedTodos.length}]`}>
 						<List>
 							{filteredCompletedTodos.map(todoItem => <TodoListItem key={todoItem.id}
-							                                                 todo={todoItem} />)}
+							                                                      todo={todoItem} />)}
 						</List>
 					</TreeItem>
 				)}
@@ -44,20 +44,19 @@ type TodoListItemProps = {
 	todo: Todo;
 }
 
-const TodoListItem = React.memo(({todo}: TodoListItemProps) => {
+const TodoListItem = React.memo(({ todo }: TodoListItemProps) => {
 	const classes = useItemStyles(!!todo?.completedOn);
-	const d = useAppDispatch();
-	const {idsForDeletion} = useAppSelector(selectTodo('idsForDeletion'))
+	const { state: { idsForDeletion }, action: todoActions } = useTodo();
 	const selectedForDelete = useMemo(() => !!idsForDeletion, [idsForDeletion]);
 
 	const handleOnClick = useCallback(() => {
 		if (selectedForDelete) {
-			d(todoActions.toggleDeleteIds(todo.id));
+			todoActions.toggleDeleteIds(todo.id);
 		} else {
-			d(todoActions.toggleTodoComplete(todo.id));
+			todoActions.toggleTodoComplete(todo.id);
 			// onClick(todo.id);
 		}
-	}, [d, selectedForDelete, todo.id])
+	}, [selectedForDelete, todo.id, todoActions])
 	return (
 		<ListItem button onClick={handleOnClick}>
 			{selectedForDelete && (

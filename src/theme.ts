@@ -1,5 +1,5 @@
-import {createMuiTheme, ThemeOptions} from '@material-ui/core';
-import {amber, grey, teal} from '@material-ui/core/colors';
+import { createMuiTheme, ThemeOptions } from '@material-ui/core';
+import { amber, grey, teal } from '@material-ui/core/colors';
 
 const theme = (useDark = false) => createMuiTheme(useDark ? darkTheme : lightTheme);
 export default theme;

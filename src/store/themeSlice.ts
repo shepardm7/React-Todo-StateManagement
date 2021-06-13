@@ -1,5 +1,4 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {getSelector} from './storeUtils';
+import { createContextWith } from "../util/contextUtil";
 
 interface ThemeState {
 	darkMode: boolean;
@@ -9,15 +8,16 @@ const initialState: ThemeState = {
 	darkMode: false
 }
 
-export const themeSlice = createSlice({
-	name: 'theme',
-	initialState,
-	reducers: {
-		setDarkMode: (state, {payload}: PayloadAction<boolean>) => void (state.darkMode = payload),
-		toggleTheme: (state) => void (state.darkMode = !state.darkMode)
+const { ContextProvider, useStoreContext } = createContextWith(initialState, {
+	setDarkMode(draft, darkMode: boolean) {
+		draft.darkMode = darkMode;
+	},
+	toggleTheme: (draft) => {
+		draft.darkMode = !draft.darkMode;
 	}
 });
 
-export const themeActions = themeSlice.actions;
-
-export const selectTheme = getSelector('theme');
+export {
+	ContextProvider as ThemeContextProvider,
+	useStoreContext as useTheme
+}
