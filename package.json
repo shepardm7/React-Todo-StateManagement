@@ -30,7 +30,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint \"src/**/*.{js,ts,tsx}\" --quiet --fix --ignore-pattern node_modules/"
   },
   "eslintConfig": {
     "extends": [
@@ -51,6 +52,14 @@
     ]
   },
   "devDependencies": {
-    "@types/lodash.pick": "^4.4.6"
+    "@types/lodash.pick": "^4.4.6",
+    "@typescript-eslint/eslint-plugin": "^4.26.1",
+    "@typescript-eslint/parser": "^4.26.1",
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.3.1"
   }
 }

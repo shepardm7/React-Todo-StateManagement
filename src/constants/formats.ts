@@ -1,5 +1,5 @@
 const formats = {
-	dateTime: 'MMM Do, YYYY | hh:mm'
+  dateTime: 'MMM Do, YYYY | hh:mm',
 };
 
 export default formats;
